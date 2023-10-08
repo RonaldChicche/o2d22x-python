@@ -11,12 +11,15 @@ class Client(object):
         self.pcicSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.pcicSocket.connect((address, port))
         # Init V3 protocol
-        self.pcicSocket.sendall(b'v03\r\n')
-        msg = self.pcicSocket.recv(5)
-        if msg == b'*\r\n':
-            print("V3 protocol inited succesfully")
-        else:
-            raise RuntimeError('Error initiating V3 protocol')
+        try:
+            self.pcicSocket.sendall(b'1000v03\r\n')
+            msg = self.pcicSocket.recv(1024)
+            if msg == b'1000*\r\n':
+                print("V3 protocol inited succesfully")
+            else:
+                raise RuntimeError('Error initiating V3 protocol')
+        except Exception as e:
+            print(f"Error: {e}")
         self.recv_counter = 0
         self.debug = False
         self.debugFull = False
@@ -347,6 +350,7 @@ class O2D22xPCICDevice(PCICV3Client):
         """
         result = self.send_command('T?')
         result = result.decode('ascii')
+        print(result)
         return result
     
     def evaluate_image_decoded(self):
@@ -461,9 +465,9 @@ class O2D22xPCICDevice(PCICV3Client):
         return result
     
     def request_image_decoded(self, result):
-        if result == "PASS":
+        if result == "0PASS":
             trama = self.request_last_image()
-        elif result == "FAIL":
+        elif result == "0FAIL":
             trama = self.request_last_bad_img()
 
         if trama == "!":

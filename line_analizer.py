@@ -97,8 +97,8 @@ class LineAnalyser():
             responses['SET_APP'] = cam.select_application(app)      # * !
             responses['SET_OT1'] = cam.activate_result_output(1)    # * !
             responses['RES_EVA'] = cam.evaluate_image_decoded()     # data !
-    
-            if responses['RES_EVA']['result'] == "FAIL":
+            print(responses)
+            if responses['RES_EVA']['result'] == "0FAIL":
                 print(f'<CAM{id_cam}> Evaluation fail - T{3-tries} retring')
                 tries -= 1
                 continue
@@ -121,8 +121,8 @@ class LineAnalyser():
     def run_analizer(self):
         results = []
         for i in range(len(self.cameras)):
-            result = self.analize_cam(i, 4)
-            # print(result[0])
+            result = self.analize_cam(i, 1)
+            print(result[0])
             results.append(result)
 
         for cam_response in results:
